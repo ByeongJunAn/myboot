@@ -29,16 +29,23 @@
 			<span th:unless ="${dto.sno % 5 == 0}" th:text="${dto.first}"></span>
 	</li>
 	</ul>
+	<ul>
+	<!-- /* <li th:each="dto, state:${list}" th:class="${dto.sno%5==0}? 'target'" th:text="${dto}"> -->
+		<li th:each="dto, state:${list}">
+		<span th:class="${dto.sno%5==0}?'target'">[[${dto}]]</span>
+		</li>
+	</ul>
+	
 	
 	<ul>
 	<li th:each="dto, state:${list}" th:text="${dto.sno % 5 ==0}? ${dto.sno}:${dto.first}"></li> 
 	</ul>
 	
 	<ul>
-	<!-- /* <li th:each="dto, state:${list}" th:class="${dto.sno%5==0}? 'target'" th:text="${dto}"> -->
-		<li th:each="dto, state:${list}">
-		<span th:class="${dto.sno%5==0}?'target'">[[${dto}]]</span>
-		</li>
+		<th:block th:each="dto: ${List}">
+			<li th:text="${dto.sno % 5 == 0}? ${dto.sno}:${dto.first}">
+			</li>
+		</th:block>
 	</ul>
 	
 </body>
