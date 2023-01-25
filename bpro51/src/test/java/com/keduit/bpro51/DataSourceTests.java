@@ -28,7 +28,6 @@ public class DataSourceTests {
 		
 		log.info(con);
 		Assertions.assertNotNull(con);
-
 	}
-	
+
 }
