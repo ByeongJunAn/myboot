@@ -11,6 +11,13 @@ public interface BoardService {
 	Long register(BoardDTO dto);
 	
 	PageResultDTO<BoardDTO, Board> getList(PageRequestDTO requestDTO);
+	
+	BoardDTO read(Long bno);
+	
+	void remove(Long bno);
+	
+	void modify(BoardDTO dto);
+	
 	default Board dtoToEntity(BoardDTO dto) {
 		Board entity = Board.builder()
 					  .bno(dto.getBno())
