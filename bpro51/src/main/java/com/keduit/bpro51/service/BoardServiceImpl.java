@@ -8,11 +8,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+
 import com.keduit.bpro51.dto.BoardDTO;
 import com.keduit.bpro51.dto.PageRequestDTO;
 import com.keduit.bpro51.dto.PageResultDTO;
 import com.keduit.bpro51.entity.Board;
+import com.keduit.bpro51.entity.QBoard;
 import com.keduit.bpro51.repository.BoardRepository;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -43,7 +47,12 @@ public class BoardServiceImpl implements BoardService {
 	public PageResultDTO<BoardDTO, Board> getList(PageRequestDTO requestDTO) {
 
 		Pageable pageable = requestDTO.getPageable(Sort.by("bno").descending());
-		Page<Board> result = repository.findAll(pageable);
+		
+		
+		  BooleanBuilder booleanBuilder = getSearch(requestDTO);
+		 
+		 Page<Board> result = repository.findAll(booleanBuilder, pageable);
+		
 		
 		Function<Board, BoardDTO> fn = (entity -> entityToDto(entity));
 		return new PageResultDTO<>(result, fn);
@@ -73,4 +82,39 @@ public class BoardServiceImpl implements BoardService {
 		}
 	}
 
+	@Override
+	public BooleanBuilder getSearch(PageRequestDTO requestDTO) {
+		String type = requestDTO.getType();
+	      BooleanBuilder booleanBuilder = new BooleanBuilder();
+	      QBoard qBoard = QBoard.board;
+	      String keyword = requestDTO.getKeyword();
+	      BooleanExpression expression = qBoard.bno.gt(0L);
+	      booleanBuilder.and(expression);
+	      
+	      if(type == null || type.trim().length() == 0) {
+	         return booleanBuilder;
+	      }
+	      
+	      BooleanBuilder conditionBuilder = new BooleanBuilder();
+	      
+	      if(type.contains("t")) {
+	         conditionBuilder.or(qBoard.title.contains(keyword));
+	      }
+	      
+	      if(type.contains("c")) {
+	         conditionBuilder.or(qBoard.content.contains(keyword));
+	      }
+	      
+	      if(type.contains("w")) {
+	         conditionBuilder.or(qBoard.writer.contains(keyword));
+	      }
+	      
+	       booleanBuilder.and(conditionBuilder);
+	      
+	      return booleanBuilder;
+		
+	}
+	
+
+	
 }

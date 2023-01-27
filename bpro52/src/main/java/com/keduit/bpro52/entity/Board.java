@@ -1,14 +1,14 @@
-package com.keduit.bpro51.entity;
+package com.keduit.bpro52.entity;
 
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,12 +18,12 @@ import lombok.ToString;
 
 
 @Entity
-@Table(name="tbl_board")
+@Table(name="board")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
+@ToString(exclude = "writer")
 public class Board extends BaseEntity{
 	
 	@Id
@@ -36,9 +36,9 @@ public class Board extends BaseEntity{
 	@Column(length = 2000, nullable = false)
 	private String content;
 	
-	@Column(length = 50, nullable = false)
-	@ManyToOne //이 클래스가 Board이므로 Board가 *(1이상), writer는 1
-	private String writer; 
+	/* @Column(length = 50, nullable = false) */
+	@ManyToOne(fetch = FetchType.LAZY) //lazy 로딩으로 지정
+	private Member writer; 
 	
 	public void change(String title, String content) {
 		this.title = title;

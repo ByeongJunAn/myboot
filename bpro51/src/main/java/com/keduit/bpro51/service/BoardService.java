@@ -1,10 +1,12 @@
 package com.keduit.bpro51.service;
 
 
+
 import com.keduit.bpro51.dto.BoardDTO;
 import com.keduit.bpro51.dto.PageRequestDTO;
 import com.keduit.bpro51.dto.PageResultDTO;
 import com.keduit.bpro51.entity.Board;
+import com.querydsl.core.BooleanBuilder;
 
 public interface BoardService {
 	
@@ -17,6 +19,8 @@ public interface BoardService {
 	void remove(Long bno);
 	
 	void modify(BoardDTO dto);
+	
+	BooleanBuilder getSearch(PageRequestDTO requestDTO);
 	
 	default Board dtoToEntity(BoardDTO dto) {
 		Board entity = Board.builder()
