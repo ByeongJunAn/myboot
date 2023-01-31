@@ -1,4 +1,4 @@
-package com.keduit.bpro52.entity;
+package com.keduit.bpro53.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,22 +13,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-
 @Entity
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
-@ToString(exclude="board")
-public class Reply extends BaseEntity {
-	
+@ToString(exclude="movie") //fk 달아주기 위해서 exclude 사용
+public class MovieImage {
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) //autoincrement와 같음
-	private Long rno;	
-	private String text;
-	private String replyer;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long inum;
 	
+	private String uuid;
+	
+	private String imgName;
+	
+	private String path;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	private Board board;
+	private Movie movie;
+	
 }

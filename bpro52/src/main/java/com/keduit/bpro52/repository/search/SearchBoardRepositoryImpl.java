@@ -1,9 +1,12 @@
 package com.keduit.bpro52.repository.search;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import com.keduit.bpro52.entity.Board;
@@ -12,7 +15,10 @@ import com.keduit.bpro52.entity.QMember;
 import com.keduit.bpro52.entity.QReply;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
 
 import lombok.extern.log4j.Log4j2;
@@ -46,10 +52,10 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
 		
 
 		JPQLQuery<Tuple> tuple = 
-				jpqlQuery.select(board, member.email, reply.count());
+				jpqlQuery.select(board, member, reply.count());
 		
 		BooleanBuilder booleanBuilder = new BooleanBuilder();
-		BooleanExpression expression = board.bno.gt(0L);
+		BooleanExpression expression = board.bno.gt(2L);
 		
 		booleanBuilder.and(expression);
 		
@@ -76,7 +82,27 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
 			
 		}
 		tuple.where(booleanBuilder);
+		
+		// sort 추가
+//		tuple.orderBy(board.bno.desc());
+		
+		Sort sort = pageable.getSort();
+		
+		sort.stream().forEach(order -> {
+			Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+			String prop= order.getProperty();
+			
+			PathBuilder orderByExpression = new PathBuilder<>(board.getClass(), "board");
+					tuple.orderBy(new OrderSpecifier(direction, orderByExpression.get(prop)));
+		});
+		
+		
 		tuple.groupBy(board);
+		
+		
+		// page 처리
+		tuple.offset(pageable.getOffset());
+		tuple.limit(pageable.getPageSize());
 		
 		
 //		log.info("--------------------");
@@ -89,10 +115,18 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
 		List<Tuple> result = tuple.fetch();
 		
 		
+		
 		log.info("result : " + result);
 	
+		
+		long count =tuple.fetchCount();
+		log.info("count : " + count);
+		
 
-		return null;
+		return new PageImpl<Object[]>
+		(result.stream().map(t -> t.toArray()).collect(Collectors.toList()),
+		pageable,
+		count);
 	}
 	
 	
