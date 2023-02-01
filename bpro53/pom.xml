@@ -65,6 +65,14 @@
 			<artifactId>thymeleaf-extras-java8time</artifactId>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>0.4.19</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
