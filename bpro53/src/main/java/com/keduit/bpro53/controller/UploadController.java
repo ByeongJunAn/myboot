@@ -90,7 +90,7 @@ public class UploadController {
 
 		File uploadPathFolder = new File(uploadPath, folderPath);
 
-		if (uploadPathFolder.exists() == false) {
+		if (uploadPathFolder.exists()==false) {
 			uploadPathFolder.mkdirs();
 		}
 		return folderPath;

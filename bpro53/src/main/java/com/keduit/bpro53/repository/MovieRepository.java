@@ -21,5 +21,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long>{ //entity의
 			+" from Movie m left outer join MovieImage mi on mi.movie = m "
 			+ " left outer join Review r on r.movie = m"
 			+ " where m.mno = :mno group by mi")
-	List<Object[]> getMovieWithAllList(Long mno);
+	List<Object[]> getMovieWithAll(Long mno);
 }
