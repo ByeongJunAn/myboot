@@ -22,7 +22,7 @@
 
 		<div class="uploadResult">
 			<ul>
-				<li th:each="movieImage: ${dto.imageDTOList}"><img
+				<li th:each="movieImage: ${dto.imageDTOList}" th:data-file="${movieImage.getThumbnailURL()}"><img
 					th:if="${movieImage.path !=null}"
 					th:src="|/display?fileName=${movieImage.getThumbnailURL()}|">
 				</li>
@@ -176,6 +176,8 @@
 			inputText.val("");
 			
 			$(".removeBtn, .modifyBtn").hide()
+			$(".saveBtn").show()
+			
 			
 			
 			
@@ -224,7 +226,7 @@
 				$.each(arr, function(idx, review){
 					console.log("review list-------------: " + review);
 					
-					str += '  <div class="card-body" data-reviewnum=' + review.reviewnum +'data-mid=' + review.mid +'>';
+					str += '  <div class="card-body" data-reviewnum="' + review.reviewnum +'" data-mid="' + review.mid +'">';
 					
 					str += '  <h5 class="card-title">' + review.text + '  <span>' + review.grade + '</sapn></h5>';
 
@@ -265,7 +267,59 @@
 					
 				 });
 					
-					
+		$(".modifyBtn").on("click", function(){
+			
+			var data = {reviewnum: reviewnum, mno:mno, grade:grade, text:inputText.val(),
+						mid:inputMid.val()};
+			
+			console.log("data : " + data);
+			
+			$.ajax({
+				url:'/reviews/'+mno+"/" + reviewnum,
+				type:"PUT",
+				data:JSON.stringify(data),
+				contentType:"application/json; charset=utf-8", 
+				dataType: "text",
+				success : function(result){
+					console.log("result : " + result);
+					self.location.reload();
+				}
+			})
+			reviewModal.modal('hide');
+			
+		});
+		
+		$(".removeBtn").on("click", function(){
+			var data= {reviewnum: reviewnum};
+			console.log("reviewnum : " + reviewnum);
+			
+			$.ajax({
+				
+				url: '/reviews/'+mno+'/'+reviewnum,
+				type: "DELETE",
+				contentType: "application/json; charset=utf-8", 
+				dataType: "text",
+				success: function(result){
+					console.log("result : " + result);
+					self.location.reload();
+				}
+			});
+			
+			reviewModal.modal('hide');
+			
+		});
+		
+		$(".uploadResult li").click(function(){
+			
+			var file = $(this).data('file');
+			console.log("file : " + file);
+			
+			$('.imageModal .modal-body').html("<img style='width:100%' src='/display?fileName="+file+"&size=1' >");
+			
+			$(".imageModal").modal("show");
+		});
+		
+		
 	}); 
 				
 			
